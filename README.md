@@ -65,10 +65,17 @@ Example: `sale/received/v1/credit/airline/voi/5723691`
 
 
 POS Simulator:
-![POS 1](/images/pos1.png)
-![POS 2](/images/pos2.png)
-![POS 3](/images/pos3.png)
-![POS 4](/images/pos4.png)
+<table>
+  <tr>
+    <td><img src="/images/pos1.png" width="300"></td>
+    <td><img src="/images/pos2.png" width="300"></td>
+  </tr>
+  <tr>
+    <td><img src="/images/pos3.png" width="300"></td>
+    <td><img src="/images/pos4.png" width="300"></td>
+  </tr>
+</table>
+
 
 Core Monitor GUI v3:
 ![Core Monitor GUI](/images/monitor_v3.png)
