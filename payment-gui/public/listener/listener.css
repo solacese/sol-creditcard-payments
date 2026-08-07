@@ -1,0 +1,65 @@
+/* Listener-specific additions on top of monitor.css's shared look and feel. */
+
+.board { gap: 16px; }
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- subscription row ---------- */
+.sub-row { display: flex; gap: 10px; margin-top: 12px; }
+.topic-in {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: var(--white);
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  outline: none;
+}
+.topic-in:focus { border-color: var(--green); }
+.sub-status {
+  margin-top: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: rgba(199, 255, 203, 0.7);
+}
+.sub-status.error { color: var(--red); }
+
+/* ---------- sample topic chips ---------- */
+.sample-list {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 12px;
+  max-height: 600px; overflow: hidden; opacity: 1;
+  transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+.sample-list[data-collapsed="true"] { max-height: 0; opacity: 0; margin-top: 0; }
+.sample-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.sample-item:hover { background: rgba(0, 200, 149, 0.12); border-color: rgba(0, 200, 149, 0.35); }
+.sample-item .topic { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent-green); white-space: nowrap; }
+.sample-item .desc { font-size: 12px; color: rgba(255, 255, 255, 0.6); }
+
+/* ---------- message log ---------- */
+.log-wrap { max-height: 60vh; overflow-y: auto; }
+.log-grid { table-layout: fixed; }
+.log-grid th:nth-child(1), .log-grid td:nth-child(1) { width: 100px; }
+.log-grid th:nth-child(2), .log-grid td:nth-child(2) { width: 110px; }
+.log-grid th:nth-child(3), .log-grid td:nth-child(3) { width: 130px; }
+.log-grid th:nth-child(4), .log-grid td:nth-child(4) { width: 140px; }
+.log-grid th:nth-child(5), .log-grid td:nth-child(5) { width: 110px; }
+.log-grid td.amount { text-align: right; }
+.log-grid td.topic-cell { color: var(--pale-green); font-weight: 600; }

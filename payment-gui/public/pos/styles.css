@@ -1,0 +1,245 @@
+/* ============================================================
+   POS Sol Terminal — styled to Solace Brand Book 2025 v3.0
+   Primary green #00C895 · Dark blue #093B5F · Darkest #08223C
+   Fonts: Figtree (UI), Space Mono (numerics/eyebrows)
+   ============================================================ */
+
+:root {
+  --green: #00C895;
+  --green-2: #009193;
+  --navy: #093B5F;
+  --navy-deep: #08223C;
+  --pale-green: #C7FFCB;
+  --accent-green: #ABFF88;
+  --orange: #FCA829;
+  --red: #ff5c6c;
+  --gray-100: #F4F4F4;
+  --gray-300: #D6D6D6;
+  --white: #ffffff;
+  --radius: 18px;
+  --shadow: 0 30px 70px rgba(8, 34, 60, 0.55);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Figtree', system-ui, sans-serif;
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 700px at 80% -10%, rgba(0, 200, 149, 0.22), transparent 60%),
+    radial-gradient(900px 600px at 0% 110%, rgba(0, 145, 147, 0.18), transparent 55%),
+    linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 100%);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+/* min-width:0 lets this flex item shrink below its content's preferred size,
+   so on narrow screens the terminal follows the viewport instead of overflowing. */
+.stage { width: 100%; max-width: 440px; min-width: 0; }
+
+/* ---------- terminal shell ---------- */
+.terminal {
+  background: linear-gradient(180deg, #0d2d49 0%, #0a2540 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.term-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+/* Left: Solace logo (never shrinks) */
+.term-logo {
+  height: clamp(24px, 7vw, 32px);
+  width: auto;
+  flex: 0 0 auto;
+  display: block;
+}
+/* Center: tap-to-pay glyph — auto margins absorb free space on both sides,
+   so it stays centered between the logo and the meta block. */
+.term-tap {
+  height: clamp(24px, 7vw, 34px);
+  width: auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 auto;
+  object-fit: contain;
+  opacity: 0.95;
+}
+/* Right: title + broker status, stacked and right-aligned. min-width:0 lets it
+   shrink so the long broker host can ellipsis instead of overflowing. */
+.term-meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  text-align: right;
+  overflow: hidden;
+}
+.term-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(10px, 3vw, 12px); text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--pale-green); line-height: 1.1; white-space: nowrap;
+}
+.broker-pill {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; padding: 4px 9px; border-radius: 999px;
+  background: rgba(0, 200, 149, 0.14); color: var(--green);
+  border: 1px solid rgba(0, 200, 149, 0.3); white-space: nowrap;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* ---------- screens ---------- */
+.screen { padding: 22px; }
+.screen.center { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; min-height: 460px; justify-content: center; }
+.hidden { display: none !important; }
+
+.eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1.6px;
+  color: rgba(199, 255, 203, 0.65); display: block; margin-bottom: 6px;
+}
+
+.amount-block { text-align: center; margin-bottom: 18px; }
+.amount-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+.cur { font-size: 34px; color: var(--green); font-weight: 600; }
+.amount {
+  font-family: 'Space Mono', monospace;
+  font-size: 54px; font-weight: 700; width: 100%; max-width: 300px;
+  background: transparent; border: none; color: var(--white); text-align: center;
+  outline: none;
+}
+
+.field-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 18px; }
+.field-wide { grid-column: 1 / -1; }
+.field select, .field input {
+  width: 100%; padding: 11px 12px; border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--white); font-family: 'Figtree', sans-serif; font-size: 14px; outline: none;
+}
+.field select:focus, .field input:focus, .amount:focus { border-color: var(--green); }
+.field select option { color: #08223C; }
+
+/* ---------- keypad ---------- */
+.keypad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+.keypad button {
+  padding: 16px 0; border-radius: 14px; font-size: 20px; font-weight: 600;
+  font-family: 'Space Mono', monospace;
+  background: rgba(255, 255, 255, 0.06); color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.10); cursor: pointer;
+  transition: transform 0.05s, background 0.15s;
+}
+.keypad button:hover { background: rgba(0, 200, 149, 0.16); }
+.keypad button:active { transform: scale(0.95); }
+.keypad .k-alt { color: var(--pale-green); }
+
+/* ---------- buttons ---------- */
+.pay-btn {
+  width: 100%; padding: 16px; border: none; border-radius: 14px; cursor: pointer;
+  font-family: 'Figtree', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px;
+  color: var(--navy-deep);
+  background: linear-gradient(135deg, var(--accent-green), var(--green) 55%, var(--green-2));
+  box-shadow: 0 12px 26px rgba(0, 200, 149, 0.35);
+  transition: transform 0.06s, box-shadow 0.15s;
+}
+.pay-btn:hover { box-shadow: 0 16px 32px rgba(0, 200, 149, 0.5); }
+.pay-btn:active { transform: translateY(1px); }
+.pay-btn.ghost {
+  background: transparent; color: var(--green);
+  border: 1.5px solid var(--green); box-shadow: none;
+}
+
+/* ---------- processing ---------- */
+.spinner {
+  width: 62px; height: 62px; border-radius: 50%;
+  border: 4px solid rgba(0, 200, 149, 0.2); border-top-color: var(--green);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.proc-text { font-size: 20px; font-weight: 600; }
+.proc-sub { font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.55); word-break: break-all; padding: 0 10px; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; }
+.chain .node {
+  font-family: 'Space Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,0.06); color: var(--pale-green);
+}
+.chain i { color: rgba(255,255,255,0.35); font-style: normal; }
+
+/* ---------- result ---------- */
+.result-badge {
+  font-family: 'Space Mono', monospace; font-weight: 700; letter-spacing: 3px;
+  font-size: 14px; padding: 8px 20px; border-radius: 999px;
+}
+.result-badge.ok { background: rgba(0, 200, 149, 0.16); color: var(--green); border: 1px solid var(--green); }
+.result-badge.no { background: rgba(255, 92, 108, 0.14); color: var(--red); border: 1px solid var(--red); }
+.result-badge.warn { background: rgba(252, 168, 41, 0.16); color: var(--orange); border: 1px solid var(--orange); }
+.result-amount { font-family: 'Space Mono', monospace; font-size: 44px; font-weight: 700; }
+.result-status { color: rgba(255,255,255,0.7); font-size: 13px; }
+.receipt {
+  width: 100%; text-align: left; margin: 6px 0 4px;
+  font-family: 'Space Mono', monospace; font-size: 12px;
+  background: rgba(0,0,0,0.2); border-radius: 12px; padding: 14px 16px;
+  display: grid; grid-template-columns: auto 1fr; gap: 6px 14px;
+}
+.receipt dt { color: rgba(199, 255, 203, 0.6); }
+.receipt dd { text-align: right; word-break: break-all; }
+
+.footnote {
+  text-align: center; margin-top: 16px; font-size: 11px;
+  color: rgba(255, 255, 255, 0.4); font-family: 'Space Mono', monospace;
+}
+
+/* ============================================================
+   Responsive / mobile
+   ============================================================ */
+
+/* Prevent iOS Safari from auto-zooming when focusing form fields:
+   any control the user taps needs a >=16px font. */
+@media (max-width: 640px) {
+  .field select, .field input { font-size: 16px; }
+  .amount { font-size: clamp(40px, 13vw, 54px); }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  body { padding: 14px 10px; align-items: flex-start; }
+  .terminal { border-radius: 22px; }
+
+  .term-head { padding: 12px 14px; gap: 8px; }
+
+  .screen { padding: 18px 16px; }
+  .screen.center { min-height: 74vh; gap: 12px; }
+
+  .cur { font-size: 26px; }
+
+  .field-grid { gap: 10px; margin-bottom: 14px; }
+  .keypad { gap: 8px; margin-bottom: 14px; }
+  .keypad button { padding: 14px 0; font-size: 18px; }
+
+  .result-amount { font-size: 36px; }
+  .receipt { font-size: 11px; padding: 12px 13px; }
+  .chain .node { font-size: 9px; padding: 3px 6px; }
+}
+
+/* Very small / narrow phones */
+@media (max-width: 340px) {
+  .field-grid { grid-template-columns: 1fr; }
+  .term-tap { display: none; } /* drop the center glyph if there's no room */
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2.5s; }
+  .keypad button:active, .pay-btn:active { transform: none; }
+}

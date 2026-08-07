@@ -1,0 +1,14 @@
+{
+  "name": "payment-gui",
+  "version": "1.0.0",
+  "description": "Payment GUI — one web app hosting the Solace-branded POS Sol Terminal (/pos) and the Payment Core Monitor (/monitor).",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "js-yaml": "^4.1.0"
+  }
+}

@@ -1,0 +1,215 @@
+# ============================================================================
+#  Solace Credit Card Payments Demo — shared configuration
+#  Every application (Node terminal, Go simulator, Java microservices) reads
+#  this single file. Common settings live at the top; app-specific settings
+#  live under their own section.
+# ============================================================================
+
+solace:
+  # --- SMF / TCP connection (used by the Java JCSMP microservices) ---------
+  tcp:
+    uri: "tcps://mmorenotest01.messaging.solace.cloud:55443"
+    username: "solace-cloud-client"
+    password: "3vecconehm281oe4kl8qcoeulk"
+    vpn: "mmoreno_test01"
+
+  # --- REST messaging endpoint (used by the POS terminal + load simulator) -
+  # NOTE: the value originally provided (tcps://...:55443) is the SMF/TCP port,
+  # not REST. Solace Cloud secured REST messaging is normally https on :9443.
+  # Adjust the port here if your service uses a different REST port.
+  rest:
+    uri: "https://mmorenotest01.messaging.solace.cloud:9443"
+    username: "solace-cloud-client"
+    password: "3vecconehm281oe4kl8qcoeulk"
+    # Blocking request-reply: wait this long for the reply on reply-to.
+    requestTimeoutMs: 30000
+    # Solace Cloud uses a valid public certificate; set to false only for
+    # self-signed brokers in a lab (skips TLS verification).
+    tlsVerify: true
+
+  # --- Secured Web Messaging (used by the Payment Core Monitor in the browser)
+  # solclientjs connects over SMF-in-WebSocket. This is the Solace Cloud
+  # "Secured Web Messaging" host (wss on :443) — distinct from the SMF/TCP
+  # (:55443), REST (:9443) and SEMP (:943) ports. Confirm it in the console
+  # under Connect → Solace Web Messaging. These credentials reach the browser
+  # (unavoidable for any browser-based Solace client); use a scoped client user.
+  web:
+    uri: "wss://mmorenotest01.messaging.solace.cloud:443"
+    username: "solace-cloud-client"
+    password: "3vecconehm281oe4kl8qcoeulk"
+    vpn: "mmoreno_test01"
+
+  # --- SEMP v2 monitor (used by the monitor's backend proxy, never the browser)
+  # The Payment Core Monitor reads each queue's message count + consumer count
+  # from here. These admin credentials stay server-side (payment-gui proxies
+  # /api/semp/queues); they are never sent to the browser.
+  semp:
+    uri: "https://mmorenotest01.messaging.solace.cloud:943"
+    username: "mission-control-manager"
+    password: "2u0j1407s2oggqhol61fpt4o2v"
+    vpn: "mmoreno_test01"
+
+# ----------------------------------------------------------------------------
+#  Merchant catalog — shared by the terminal and the simulator.
+#  merchantType -> list of merchant names that belong to that type.
+# ----------------------------------------------------------------------------
+merchants:
+  airline:
+    - voi          # Volaris
+    - aeromexico
+    - united
+  restaurant:
+    - ihop
+    - chipotle
+    - dennys
+  hotel:
+    - marriott
+    - hilton
+    - hyatt
+  retail:
+    - amazon
+    - walmart
+    - target
+
+currencies:
+  USD: 'U$'
+  MXN: '$'
+  EUR: '€'
+
+cardTypes:
+  - credit
+  - debit
+
+# ----------------------------------------------------------------------------
+#  Application-specific sections
+# ----------------------------------------------------------------------------
+
+# POS Sol Terminal (Node.js web GUI)
+posTerminal:
+  httpPort: 8080
+  # Producers always fix the first 3 topic levels; terminal uses v2.
+  restTopicPrefix: "sale/received/v2"
+  # Console log verbosity: error | warn | info | debug
+  #   error → only failures | warn → + timeouts/bad input
+  #   info  → + request sent / response received (default)
+  #   debug → + full payloads, URLs, raw responses, reply path
+  logLevel: "info"
+
+# Payment Core Monitor (browser view, served by payment-gui at /monitor)
+monitor:
+  defaultVersion: "v2"   # v1 | v2 — which event version the grids show (applied to all)
+  refreshSec: 60         # default SEMP auto-refresh interval (configurable in the GUI)
+  maxRows: 10            # events retained per microservice grid
+  maxRowsStacked: 3      # events retained for stacked validator grids (v3 only)
+
+# POS Load Simulator (Go)
+loadSimulator:
+  restTopicPrefix: "sale/received/v1"   # simulator uses v1
+  terminals: 10                          # concurrent simulated POS terminals
+  idleMinMs: 500                         # random idle time between payments...
+  idleMaxMs: 4000                        # ...per terminal
+  statsIntervalSec: 5                    # print traffic statistics every N sec
+  amountMin: 5.00
+  amountMax: 950.00
+  # Console log verbosity: error | warn | info | debug
+  #   error → transport errors only  | warn → + timeouts
+  #   info  → + declines + lifecycle (default; approvals stay quiet under load)
+  #   debug → + every request sent and approved response
+  logLevel: "info"
+
+# ---- Java microservices (JCSMP) --------------------------------------------
+# Each app auto-provisions its durable queue and topic subscription(s).
+# procMinMs/procMaxMs define the simulated processing time window.
+
+paymentInitiator:
+  queue: "PaymentsReceived_Initiator"
+  subscription: "sale/received/>"
+  successProcess: "initiated"
+  procMinMs: 200
+  procMaxMs: 500
+
+validator:
+  queue: "PaymentsInitiated_Validator"
+  subscription: "sale/initiated/>"
+  successProcess: "validated"
+  rejectProcess: "invalid"
+  rejectPct: 25
+  procMinMs: 3000
+  procMaxMs: 5000
+
+validatorCredit:
+  queue: "PaymentsInitiated_ValidatorCredit"
+  subscription: "sale/initiated/*/credit/>"
+  successProcess: "validated"
+  rejectProcess: "invalid"
+  rejectPct: 25
+  procMinMs: 3000
+  procMaxMs: 5000
+
+validatorDebit:
+  queue: "PaymentsInitiated_ValidatorDebit"
+  subscription: "sale/initiated/*/debit/>"
+  successProcess: "validated"
+  rejectProcess: "invalid"
+  rejectPct: 25
+  procMinMs: 3000
+  procMaxMs: 5000
+
+authorizer:
+  queue: "PaymentsValidated_Authorizer"
+  subscription: "sale/validated/>"
+  successProcess: "authorized"
+  rejectProcess: "rejected"
+  rejectPct: 25
+  procMinMs: 1000
+  procMaxMs: 1500
+
+fraudClearing:
+  queue: "PaymentsAuthorized_Fraud"
+  subscription: "sale/authorized/>"
+  successProcess: "cleared"
+  rejectProcess: "fraud"
+  rejectPct: 25
+  procMinMs: 500
+  procMaxMs: 1000
+  # On SUCCESS, also publish a copy of the event to the message's reply-to.
+  replyOnSuccess: true
+
+errorHandler:
+  queue: "PaymentsRejected_Handler"
+  subscriptions:
+    - "sale/invalid/>"
+    - "sale/rejected/>"
+    - "sale/fraud/>"
+  # Always publish a copy of the rejected event to the message's reply-to.
+  replyOnReject: true
+
+# ---- Fan-out consumers (JCSMP) ---------------------------------------------
+# All four subscribe independently to "sale/cleared/>" — each gets its own
+# durable copy of every cleared event (fan-out, not a processing chain).
+# They simulate work for procMinMs/procMaxMs and do not republish or reply;
+# the REST request-reply was already closed by FraudClearing.
+
+settlement:
+  queue: "PaymentsCleared_Settlement"
+  subscription: "sale/cleared/>"
+  procMinMs: 200
+  procMaxMs: 900
+
+insights:
+  queue: "PaymentsCleared_Insights"
+  subscription: "sale/cleared/>"
+  procMinMs: 50
+  procMaxMs: 250
+
+riskAudit:
+  queue: "PaymentsCleared_RiskAudit"
+  subscription: "sale/cleared/>"
+  procMinMs: 150
+  procMaxMs: 700
+
+upsell:
+  queue: "PaymentsCleared_Upsell"
+  subscription: "sale/cleared/>"
+  procMinMs: 100
+  procMaxMs: 500

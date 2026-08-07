@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Core · Live Topic Listener</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/monitor/monitor.css" />
+  <link rel="stylesheet" href="/listener/listener.css" />
+  <!-- Solace JavaScript messaging API (browser build). Pinned for reproducibility. -->
+  <script src="https://cdn.jsdelivr.net/npm/solclientjs@10.18.3/lib-browser/solclient.js"></script>
+</head>
+<body>
+  <header class="mon-head">
+    <img class="mon-logo" src="/assets/Solace-Logo-2025-Green.png" alt="Solace" />
+    <div>
+      <div class="mon-title">Live Topic Listener</div>
+      <div class="mon-sub">Subscribe to any topic on the Solace broker</div>
+    </div>
+    <div class="controls">
+      <div class="controls-row">
+        <div class="stoplight" id="stoplight" data-state="red">
+          <span class="dots">
+            <span class="dot red"></span>
+            <span class="dot amber"></span>
+            <span class="dot green"></span>
+          </span>
+          <span class="label" id="stoplightLabel">Disconnected</span>
+        </div>
+        <span class="global-upd" id="msgCount">0 messages</span>
+        <button class="btn btn-secondary" id="clearBtn">Clear</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="board">
+    <section class="band sync">
+      <div class="band-label">Subscription
+        <small>Enter a topic (subscription wildcards allowed) and press Subscribe</small>
+      </div>
+      <div class="sub-row">
+        <input class="topic-in" id="topicInput" type="text" value="sale/>" autocomplete="off" spellcheck="false" />
+        <button class="btn" id="subscribeBtn">Subscribe</button>
+      </div>
+      <div class="sub-status" id="subStatus">Not subscribed</div>
+    </section>
+
+    <section class="band sync samples">
+      <div class="band-header">
+        <div class="band-header-title">
+          <button class="collapse-toggle" id="samplesToggle" data-expanded="true">
+            <span class="arrow">▼</span>
+          </button>
+          <div class="band-label">Sample Topics
+            <small>Click a pattern to load it into the topic box, from general to very specific</small>
+          </div>
+        </div>
+      </div>
+      <div class="sample-list" id="sampleList" data-collapsed="false"></div>
+    </section>
+
+    <section class="band async">
+      <div class="band-header">
+        <div class="band-header-title">
+          <div class="band-label">Incoming Messages</div>
+        </div>
+      </div>
+      <div class="log-wrap">
+        <table class="grid log-grid">
+          <thead><tr><th>RX Time</th><th>Txn ID</th><th>Status</th><th>Merchant ID</th><th>Amount</th><th>Topic</th></tr></thead>
+          <tbody id="logBody">
+            <tr class="empty"><td colspan="6">waiting for messages…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/listener/listener.js"></script>
+</body>
+</html>

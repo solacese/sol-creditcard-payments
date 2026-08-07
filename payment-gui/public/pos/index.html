@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS Sol Terminal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="stage">
+    <!-- ================= Card machine ================= -->
+    <div class="terminal" id="terminal">
+      <header class="term-head">
+        <!-- Solace wordmark (inline SVG so it uses the page's Figtree font and
+             scales crisply). To use the exact brand asset instead, drop it at
+             assets/solace-logo.svg|png and swap this <svg> for an <img>. -->
+        <img class="term-logo" src="/assets/Solace-Logo-2025-Green.png" alt="Solace logo" />
+        <img class="term-tap" src="/assets/tap-to-pay.svg" alt="Tap to pay" />
+
+        <div class="term-meta">
+          <div class="term-title">POS Sol Terminal</div>
+        </div>
+      </header>
+
+      <!-- ---- Input view ---- -->
+      <section class="screen" id="inputView">
+        <div class="amount-block">
+          <label class="eyebrow">Amount</label>
+          <div class="amount-row">
+            <span class="cur" id="curSymbol">$</span>
+            <input id="amount" class="amount" inputmode="decimal" value="0.00" />
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field">
+            <label class="eyebrow">Currency</label>
+            <select id="currency"></select>
+          </div>
+          <div class="field">
+            <label class="eyebrow">Card type</label>
+            <select id="cardType"></select>
+          </div>
+          <div class="field">
+            <label class="eyebrow">Merchant type</label>
+            <select id="merchantType"></select>
+          </div>
+          <div class="field">
+            <label class="eyebrow">Merchant</label>
+            <select id="merchantName"></select>
+          </div>
+          <div class="field field-wide">
+            <label class="eyebrow">Merchant ID</label>
+            <input id="merchantId" placeholder="auto-generated if blank" />
+          </div>
+        </div>
+
+        <!-- keypad -->
+        <div class="keypad" id="keypad">
+          <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+          <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+          <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+          <button data-k="C" class="k-alt">C</button><button data-k="0">0</button>
+          <button data-k="back" class="k-alt">⌫</button>
+        </div>
+
+        <button id="payBtn" class="pay-btn">PAY</button>
+      </section>
+
+      <!-- ---- Processing view ---- -->
+      <section class="screen center hidden" id="processingView">
+        <div class="spinner"></div>
+        <div class="proc-text">Contacting Solace…</div>
+        <div class="proc-sub" id="procTopic"></div>
+        <div class="chain">
+          <span class="node">received</span><i>→</i>
+          <span class="node">initiated</span><i>→</i>
+          <span class="node">validated</span><i>→</i>
+          <span class="node">authorized</span><i>→</i>
+          <span class="node">cleared</span>
+        </div>
+      </section>
+
+      <!-- ---- Result view ---- -->
+      <section class="screen center hidden" id="resultView">
+        <div class="result-badge" id="resultBadge">APPROVED</div>
+        <div class="result-amount" id="resultAmount">$0.00</div>
+        <div class="result-status" id="resultStatus"></div>
+        <dl class="receipt" id="receipt"></dl>
+        <button id="againBtn" class="pay-btn ghost">NEW SALE</button>
+      </section>
+    </div>
+    <p class="footnote">Payments published to Solace over REST request-reply</p>
+    <p class="footnote">Topic · <span id="footTopic"></span></p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

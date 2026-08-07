@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment GUI · Solace Credit Card Payments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #00C895; --green-2: #009193; --navy: #093B5F; --navy-deep: #08223C;
+      --pale-green: #C7FFCB; --accent-green: #ABFF88; --white: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Figtree', system-ui, sans-serif; min-height: 100vh; color: var(--white);
+      background:
+        radial-gradient(1100px 700px at 80% -10%, rgba(0,200,149,0.22), transparent 60%),
+        radial-gradient(900px 600px at 0% 110%, rgba(0,145,147,0.18), transparent 55%),
+        linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 20px; gap: 34px;
+    }
+    header { text-align: center; }
+    .logo { height: 40px; margin-bottom: 18px; }
+    h1 { font-size: clamp(24px, 5vw, 34px); font-weight: 800; }
+    .tag { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--pale-green); letter-spacing: 1px; margin-top: 8px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; width: 100%; max-width: 760px; }
+    a.card {
+      display: block; text-decoration: none; color: var(--white);
+      background: linear-gradient(180deg, #0d2d49 0%, #0a2540 100%);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 26px;
+      box-shadow: 0 20px 50px rgba(8,34,60,0.5); transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+    }
+    a.card:hover { transform: translateY(-3px); border-color: var(--green); box-shadow: 0 26px 60px rgba(0,200,149,0.25); }
+    .card .eyebrow { font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1.6px; color: rgba(199,255,203,0.65); }
+    .card h2 { font-size: 22px; font-weight: 800; margin: 8px 0 10px; }
+    .card p { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+    .card .go { display: inline-block; margin-top: 16px; font-weight: 700; color: var(--green); }
+    .card .go::after { content: " →"; }
+    .pos-row { display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: stretch; grid-column: 1 / -1; }
+    a.qr-card {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      text-decoration: none; color: var(--white); background: linear-gradient(180deg, #0d2d49 0%, #0a2540 100%);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px;
+      box-shadow: 0 20px 50px rgba(8,34,60,0.5); transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+    }
+    a.qr-card:hover { transform: translateY(-3px); border-color: var(--green); box-shadow: 0 26px 60px rgba(0,200,149,0.25); }
+    a.qr-card img { width: 325px; height: 325px; border-radius: 8px; background: var(--white); padding: 4px; }
+    a.qr-card .qr-label { font-size: 12px; text-align: center; color: rgba(255,255,255,0.7); line-height: 1.4; max-width: 120px; }
+    footer { font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="/assets/Solace-Logo-2025-Green.png" alt="Solace" />
+    <h1>Solace Credit Card Payments</h1>
+    <div class="tag">POS terminal · live payment-core monitor</div>
+  </header>
+
+  <div class="cards">
+    <div class="pos-row">
+      <a class="card" href="/pos">
+        <div class="eyebrow">Producer</div>
+        <h2>POS Sol Terminal</h2>
+        <p>A branded card machine. Enter an amount, pick a merchant and card, and fire a payment to Solace over REST request-reply — it blocks until the chain clears or declines.</p>
+        <span class="go">Open the terminal</span>
+      </a>
+
+      <a class="qr-card" href="/pos">
+        <img src="/assets/pos_qr.png" alt="QR code linking to the POS terminal" />
+        <span class="qr-label">Scan to open the POS terminal</span>
+      </a>
+    </div>
+
+    <a class="card" href="/monitor/v2.html">
+      <div class="eyebrow">Observer · Full</div>
+      <h2>Payment Core Monitor (v2)</h2>
+      <p>Full version with all 9 microservices: the complete sync chain plus 4 async subscribers. Watch each event land and see per-queue depth and consumer counts from SEMP.</p>
+      <span class="go">Open Monitor v2</span>
+    </a>
+
+    <a class="card" href="/monitor/v1.html">
+      <div class="eyebrow">Observer · Compact</div>
+      <h2>Payment Core Monitor (v1)</h2>
+      <p>Compact version with 8 microservices: sync chain plus 3 async subscribers (no Upsell). Same functionality, simplified layout.</p>
+      <span class="go">Open Monitor v1</span>
+    </a>
+
+    <a class="card" href="/monitor/v3.html">
+      <div class="eyebrow">Observer · Latest</div>
+      <h2>Payment Core Monitor (v3)</h2>
+      <p>Latest version with enhanced architecture diagram. Toggle between v1 and v2 event schemas in real-time, and watch parallel validator flows side-by-side.</p>
+      <span class="go">Open Monitor v3</span>
+    </a>
+
+    <a class="card" href="/listener">
+      <div class="eyebrow">Observer · Ad hoc</div>
+      <h2>Live Topic Listener</h2>
+      <p>Connect to the broker and subscribe to any topic you type — from the firehose (sale/&gt;) down to a single merchant and card type. Great for exploring topic patterns live.</p>
+      <span class="go">Open the listener</span>
+    </a>
+  </div>
+
+  <footer>Served by payment-gui · all events flow through the Solace broker</footer>
+</body>
+</html>

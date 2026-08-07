@@ -1,0 +1,20 @@
+# Java / Maven
+payment-core/**/target/
+payment-core/**/dependency-reduced-pom.xml
+*.class
+
+# Node
+payment-gui/node_modules/
+npm-debug.log*
+
+# Payment GUI runtime scratch
+payment-gui/tmp-shots/
+
+# Go
+pos-load-simulator/pos-load-simulator
+pos-load-simulator/pos-load-simulator.exe
+
+# misc
+brandbook.pdf
+*.log
+.DS_Store

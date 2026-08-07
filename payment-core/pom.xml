@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.solace.demo.payments</groupId>
+    <artifactId>payment-core</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>Solace Credit Card Payments — Core</name>
+
+    <modules>
+        <module>common</module>
+        <module>payment-initiator</module>
+        <module>validator</module>
+        <module>validator-credit</module>
+        <module>validator-debit</module>
+        <module>authorizer</module>
+        <module>fraud-clearing</module>
+        <module>error-handler</module>
+        <module>settlement</module>
+        <module>upsell</module>
+        <module>insights</module>
+        <module>risk-audit</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jcsmp.version>10.25.2</jcsmp.version>
+        <jackson.version>2.17.2</jackson.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
+        <slf4j.version>2.0.13</slf4j.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.solacesystems</groupId>
+                <artifactId>sol-jcsmp</artifactId>
+                <version>${jcsmp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Build a runnable fat-jar for each console app. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals><goal>shade</goal></goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

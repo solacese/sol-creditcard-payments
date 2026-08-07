@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Core Monitor (v3)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="monitor.css" />
+  <!-- Solace JavaScript messaging API (browser build). Pinned for reproducibility. -->
+  <script src="https://cdn.jsdelivr.net/npm/solclientjs@10.18.3/lib-browser/solclient.js"></script>
+</head>
+<body>
+  <header class="mon-head">
+    <img class="mon-logo" src="/assets/Solace-Logo-2025-Green.png" alt="Solace" />
+    <div>
+      <div class="mon-title">Payment Core Monitor (v3)</div>
+      <div class="mon-sub">Events live from the Solace broker</div>
+    </div>
+    <div class="controls">
+      <div class="controls-row">
+        <div class="stoplight" id="stoplight" data-state="red">
+          <span class="dots">
+            <span class="dot red"></span>
+            <span class="dot amber"></span>
+            <span class="dot green"></span>
+          </span>
+          <span class="label" id="stoplightLabel">Disconnected</span>
+        </div>
+        <div class="ctrl">
+          <label>Topic Version</label>
+          <div class="seg" id="versionSeg">
+            <button data-v="v1">v1</button>
+            <button data-v="v2">v2</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <label>Animation Speed</label>
+          <input class="speed-in" id="speedSlider" type="range" min="200" max="3000" step="100" value="1000" />
+          <span class="speed-val" id="speedVal">1000ms</span>
+        </div>
+        <div class="ctrl">
+          <label>Stats Refresh (s)</label>
+          <input class="refresh-in" id="refreshSec" type="number" min="5" step="5" value="60" />
+          <button class="btn" id="refreshBtn">Refresh</button>
+        </div>
+        <span class="global-upd" id="globalUpdated">Updated —</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="board">
+    <section class="band sync">
+      <div class="band-label">Synchronous path
+        <small>Each stage process an event and generates a new event for the next process</small>
+      </div>
+      <div class="cards" id="syncCards"></div>
+    </section>
+
+    <div class="bus">
+      <img src="/assets/sol-broker2.png" alt="Solace broker" />
+    </div>
+
+    <section class="band async">
+      <div class="band-header">
+        <div class="band-header-title">
+          <button class="collapse-toggle" id="asyncToggle" data-expanded="false">
+            <span class="arrow">▼</span>
+          </button>
+          <div class="band-label">Asynchronous · Parallel path</div>
+        </div>
+      </div>
+      <div class="cards" id="asyncCards" data-collapsed="true"></div>
+    </section>
+  </main>
+
+  <script>const MONITOR_VERSION = 'v3';</script>
+  <script src="monitor.js"></script>
+</body>
+</html>
