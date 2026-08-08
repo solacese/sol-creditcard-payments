@@ -9,7 +9,7 @@ Everything up to `sale/cleared/>` is a **synchronous processing chain** — each
 
 ![Payment Event Flow](/images/payment-sync-flow.png)
 
-Once a payment clears, four more consumers each get their **own independent copy** of that same event (Solace **fan-out**): They process it asynchronously and in parallel. None of them gtenerate a REST reply or a new event. 
+Once a payment clears, four more consumers each get their **own independent copy** of that same event (Solace **fan-out**): They process it asynchronously and in parallel. None of them generate a REST reply or a new event. 
 In order to simulate unsuccesful flows, the Validator, Authorizer and FraudClearing microservices will fail 25% of the transacctions.
 
 ```
@@ -21,7 +21,7 @@ POS Load Simulator ┘                            └─► ValidatorDebit  ─�
       ▲     ▲                                       (25%)                   (25%)           (25%)                │   │
       │     │                                     invalid                 rejected          fraud                │   │
       │     └── (HTTP reply) ◄─── ErrorHandler ◄──────└────────────────────────┴───────────────┘                 │   │
-      │                                                                                                          │   │                    
+      │                                                                                                          │   │
       └─────────(HTTP reply)── reply-to ─────────────────────────────────────────────────────────────────────────┘   │
                                                                                                                      │
                                                                   Settlement  ◄────┬── sale/cleared/> ◄──────────────┘
