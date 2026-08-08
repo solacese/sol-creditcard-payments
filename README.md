@@ -1,29 +1,34 @@
 # Solace Credit Card Payments Demo
 
-A reference demo showing how the **Solace** event broker powers a credit-card payment flow across independent syncronous + asyncronous applications and microservices. Everything communicates through Solace using a structured topic hierarchy, and demonstrating the **Solace REST request-reply** + ** Solace Pub Sub patterns ** — a POS terminal fires a payment over REST and *blocks* until the transaction has traversed the whole syncronous chain and a reply lands back on the broker-generated `reply-to`, while the Asyncronous microserivices get executed afterwards withouth delaying the response to the POS (and Customer)
+A reference demo showing how the **Solace** event broker powers a credit-card payment flow across independent synchronous + asynchronous applications and microservices. Everything communicates through Solace using a structured topic hierarchy, and demonstrating the **Solace REST request-reply** + **Solace Pub Sub patterns** — a POS terminal fires a payment over REST and *blocks* until the transaction has traversed the whole synchronous chain and a reply lands back on the broker-generated `reply-to`, while the Asynchronous microserivices get executed afterwards withouth delaying the response to the POS (and Customer)
 
 ![Payment Event Flow](/images/payment-event-flow.png)
 
-```
-                                    Solace broker
-POS Sol Terminal  ─┐                                            ┌─► FraudClearing ─(success)─┐
- (web, REST v2)    ├─► sale/received/> ─► Initiator ─► Validator ─► Authorizer ─► sale/funded/> │ reply-to
-POS Load Simulator ┘                          │           │          │                       ▼
- (Go, REST v1)                                 └(25%)      └(25%)     └(25%)            (HTTP reply)
-                                              invalid    rejected    fraud                 ▲
-                                                 └────────────┴──────────┴─► ErrorHandler ─┘
 
-                                                                  sale/cleared/> ──┬─► Settlement
-                                                                  (fan-out, 4      ├─► Upsell
-                                                                   independent     ├─► Insights
-                                                                   subscribers)    └─► RiskAudit
-```
+Everything up to `sale/cleared/>` is a **synchronous processing chain** — each stage mocks bussiness logic, updates the event status in the payload and generates a new event for the next stage to consume. 
 
-Everything up to `sale/cleared/>` is a **synchronous processing chain** — each
-stage swaps the topic's process level and republishes to the next one. Once a
-payment clears, four more consumers each get their **own independent copy**
-of that same event (Solace **fan-out**): they process it asynchronously and
-in parallel, and none of them republish or reply — they're terminal.
+![Payment Event Flow](/images/payment-sync-flow.png)
+
+Once a payment clears, four more consumers each get their **own independent copy** of that same event (Solace **fan-out**): They process it asynchronously and in parallel. None of them gtenerate a REST reply or a new event. 
+In order to simulate unsuccesful flows, the Validator, Authorizer and FraudClearing microservices will fail 25% of the transacctions.
+
+```
+                                          Solace broker
+POS Sol Terminal  ─┐                            ┌─► ValidatorCredit ─┐
+ (web, REST v2)    ├─► sale/received/> ─► Initiator                  ├─► Authorizer ─►  FraudClearing ─(success)─┬───┐
+POS Load Simulator ┘                            └─► ValidatorDebit  ─┘       │                │                  │   │
+ (Go, REST v1)                                       │                       │                │                  │   │
+      ▲     ▲                                       (25%)                   (25%)           (25%)                │   │
+      │     │                                     invalid                 rejected          fraud                │   │
+      │     └── (HTTP reply) ◄─── ErrorHandler ◄──────└────────────────────────┴───────────────┘                 │   │
+      │                                                                                                          │   │                    
+      └─────────(HTTP reply)── reply-to ─────────────────────────────────────────────────────────────────────────┘   │
+                                                                                                                     │
+                                                                  Settlement  ◄────┬── sale/cleared/> ◄──────────────┘
+                                                                  Upsell      ◄────┤   (fan-out, 4
+                                                                  Insights    ◄────┤   independent
+                                                                  RiskAudit   ◄────┘   subscribers)
+```
 
 ## Topic pattern
 
