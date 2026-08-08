@@ -93,14 +93,14 @@ Core JAVA Console Microservices:
 
 ### Monitor / deployment topologies
 
-The demo is built to be run as a **progression** — each topology adds or changes
+The demo is built to be run as a **progression** — each version (v1, v2 & v3) adds or changes
 a piece of the microservice chain, and the monitor has a matching view:
 
-| Topology | Services (count) | What it shows |
+| Topology | Core Services  | What it shows |
 |----------|-------------------|----------------|
-| **v1** | Initiator, Validator, Authorizer, FraudClearing, ErrorHandler, Settlement, Insights, RiskAudit (8) | Baseline chain, no Upsell |
-| **v2** (default) | v1 + Upsell (9) | Adds the Upsell fan-out consumer to an already-running system |
-| **v3** | v1/v2 minus Validator, plus Validator Credit + Validator Debit (10) | Splits validation into two independently-scaled services, one per card type |
+| **v1** | Sync: (Initiator, Validator, Authorizer, FraudClearing, ErrorHandler) Async (Settlement, Insights, RiskAudit) | Baseline chain, Only 3 Pub Sub Async consumers |
+| **v2** | v1 + Upsell (9) | A new Upsell fan-out consumer is introduced to an already-running system |
+| **v3** | v2 but Validator gets branched into Validator Credit + Validator Debit | Splits validation flow into two independently-scaled services, with the help of Solace Topic Routing Capabilities |
 
 Start the matching microservice set with the `start-services-v1/v2/v3` scripts
 (below — Windows in [`scripts/win/`](scripts/win/), macOS/Linux/Git Bash in
